@@ -1,0 +1,45 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+section:nth-child(1) {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  overflow: hidden;
+  position: relative;
+  font-size: 2rem;
+  padding: 0.5rem 2rem;
+  border: none;
+  outline: none;
+}
+
+.primary {
+  background-color: rgb(50, 50, 255);
+  color: white;
+}
+
+.primary:hover {
+  background-color: rgb(100, 100, 255);
+}
+
+.ripple {
+  position: absolute;
+  transform: scale(0);
+  background-color: rgba(255, 255, 255, 0.5);
+  animation: scaleUp 0.5s linear;
+  border-radius: 50%;
+}
+
+@keyframes scaleUp {
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
