@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Minimal Todo App</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="style.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body>
+    <section>
+      <div class="container round">
+        <div class="form-frame">
+          <form class="round" onsubmit="handleSubmit(event)">
+            <div>
+              <h3>What you want to do?</h3>
+              <input
+                class="round"
+                type="text"
+                name="title"
+                placeholder="enter task"
+              />
+            </div>
+            <button class="btn round" type="submit">Submit</button>
+          </form>
+        </div>
+        <div class="list-frame">
+          <div class="sort-frame">
+            <select onchange="handleSort(event)">
+              <option value="a-z">A-Z</option>
+              <option value="z-a">Z-A</option>
+              <option value="newest">Newest</option>
+              <option value="latest">Latest</option>
+              <option value="done">Done</option>
+              <option value="not-done">Not-Done</option>
+            </select>
+          </div>
+          <ul class="list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="modal d-none">
+      <form class="round" onsubmit="handleUpdate(event)">
+        <div>
+          <h3>Update Task</h3>
+          <input
+            class="round"
+            type="text"
+            name="update-task"
+            placeholder="update task"
+          />
+        </div>
+        <button
+          class="btn round cancel"
+          type="button"
+          onclick="handleCancel(event)"
+        >
+          Cancel
+        </button>
+        <button class="btn round submit" type="submit">Update Task</button>
+      </form>
+    </section>
+
+    <script src="script.js"></script>
+  </body>
+</html>
