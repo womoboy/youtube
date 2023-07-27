@@ -1,60 +1,86 @@
 let data = localStorage.getItem("tasks")
   ? JSON.parse(localStorage.getItem("tasks"))
   : [];
-const message = {
-  emptyList: "There is no any task!",
+const messageBox = {
+  emptyList: "There is no any task",
 };
 
 window.onload = () => {
+  const listFrame = document.getElementsByClassName("list-frame")[0];
+  const container = document.getElementsByClassName("container")[0];
   if (data.length > 0) {
+    listFrame.classList.remove("d-none");
+    const messageBox = document.getElementsByClassName("message-box")[0];
+    if (messageBox) {
+      messageBox.remove();
+    }
     createList(data);
   } else {
-    const listEle = document.getElementsByClassName("list")[0];
-    const sortFrameEle = document.getElementsByClassName("sort-frame")[0];
-    sortFrameEle.classList.add("d-none");
-    listEle.innerHTML = message.emptyList;
+    listFrame.classList.add("d-none");
+    const span = document.createElement("span");
+    span.classList.add("message-box");
+    span.innerHTML = `<p>${messageBox.emptyList}</p>`;
+    container.appendChild(span);
   }
 };
 
 const handleSubmit = (e) => {
   e.preventDefault();
   const input = document.getElementsByName("title")[0];
-
   if (input.value) {
+    const listFrame = document.getElementsByClassName("list-frame")[0];
     const d = new Date();
-    const title = input.value;
-    const taskObj = { title: title, date: String(d), isDone: false };
+    const taskObj = { title: input.value, date: String(d), isDone: false };
     data.push(taskObj);
+
+    listFrame.classList.remove("d-none");
     localStorage.setItem("tasks", JSON.stringify(data));
+    createList(data);
+    input.value = "";
   } else {
-    input.style.border = "2px solid red";
+    input.style.border = "1px solid red";
   }
-  input.value = "";
-  createList(data);
+
+  const messageBox = document.getElementsByClassName("message-box")[0];
+  if (messageBox) {
+    messageBox.remove();
+  } else {
+    return;
+  }
 };
 
 const createList = (arr) => {
-  const listEle = document.getElementsByClassName("list")[0];
-  const sortFrameEle = document.getElementsByClassName("sort-frame")[0];
+  const listEle = document.getElementsByClassName("todo-list")[0];
   if (arr.length > 0) {
-    sortFrameEle.classList.remove("d-none");
     let list = "";
     arr.forEach((item, index) => {
       return (list += `
-        <li key="${index}" class="round ${item.isDone ? "active" : ""}">
+        <li key="${index}" class="${item.isDone ? "active" : ""}">
           <div>
             <h3>${item.title}</h3>
             <p>${item.date}</p>
           </div>
-          <div class="btn-frame">
-            <button onclick="handleDone(event)" class="btn">
-              <i class="fa-solid fa-check"></i>
+          <div>
+            <button
+              onclick="handleDone(event)"
+              type="button"
+              class="btn primary"
+            >
+              Done
             </button>
-            <button onclick="handleEdit(event)" class="btn">
-              <i class="fa-solid fa-pen-to-square"></i>
+            <button
+              onclick="handleEdit(event)"
+              type="button"
+              class="btn secoundary"
+            >
+              Edit
             </button>
-            <button onclick="handleDelete(event)" class="btn">
-              <i class="fa-solid fa-trash"></i>
+            <button
+              onclick="handleDelete(event)"
+              type="button"
+              class="btn danger"
+            >
+              Delete
             </button>
           </div>
         </li>
@@ -62,16 +88,27 @@ const createList = (arr) => {
     });
     listEle.innerHTML = list;
   } else {
-    sortFrameEle.classList.add("d-none");
+    const listFrame = document.getElementsByClassName("list-frame")[0];
     listEle.innerHTML = "";
+    listFrame.classList.add("d-none");
   }
 };
 
+const handleDelete = (e) => {
+  const key = e.currentTarget.closest("li").getAttribute("key");
+  const newArr = data.filter((item, index) => {
+    return index !== Number(key);
+  });
+  data = newArr;
+  localStorage.setItem("tasks", JSON.stringify(data));
+  createList(data);
+};
+
 const handleDone = (e) => {
-  const key = Number(e.currentTarget.closest("li").getAttribute("key"));
+  const key = e.currentTarget.closest("li").getAttribute("key");
   data.map((item, index) => {
-    if (index === key) {
-      return (item.isDone = !item.isDone);
+    if (index === Number(key)) {
+      item.isDone = !item.isDone;
     } else {
       return;
     }
@@ -84,26 +121,9 @@ const handleEdit = (e) => {
   const key = e.currentTarget.closest("li").getAttribute("key");
   const modal = document.getElementsByClassName("modal")[0];
   const updateInput = document.getElementsByName("update-task")[0];
-  updateInput.value = data[key].title;
-  updateInput.setAttribute("key", key);
   modal.classList.remove("d-none");
-  localStorage.setItem("tasks", JSON.stringify(data));
-};
-
-const handleDelete = (e) => {
-  const key = Number(e.currentTarget.closest("li").getAttribute("key"));
-  const newArr = data.filter((item, index) => {
-    return index !== key;
-  });
-  data = newArr;
-  localStorage.setItem("tasks", JSON.stringify(data));
-  createList(data);
-};
-
-const handleCancel = (e) => {
-  e.preventDefault();
-  const modal = document.getElementsByClassName("modal")[0];
-  modal.classList.add("d-none");
+  updateInput.value = data[Number(key)].title;
+  updateInput.setAttribute("key", Number(key));
 };
 
 const handleUpdate = (e) => {
@@ -120,23 +140,24 @@ const handleUpdate = (e) => {
       return;
     }
   });
+
   modal.classList.add("d-none");
   localStorage.setItem("tasks", JSON.stringify(data));
   createList(data);
 };
 
 const handleSort = (e) => {
-  const value = String(e.currentTarget.value);
-  getSort(data, value);
+  const option = e.currentTarget.value;
+  getSort(data, option);
   createList(data);
 };
 
 const getSort = (arr, option) => {
-  if (arr.length) {
+  if (arr.length > 0) {
     if (option === "a-z") {
       arr.sort((a, b) => {
-        const first = a.title;
-        const secound = b.title;
+        const first = a.title.toLowerCase();
+        const secound = b.title.toLowerCase();
         if (first > secound) {
           return 1;
         } else if (first < secound) {
@@ -147,8 +168,8 @@ const getSort = (arr, option) => {
       });
     } else if (option === "z-a") {
       arr.sort((a, b) => {
-        const first = a.title;
-        const secound = b.title;
+        const first = a.title.toLowerCase();
+        const secound = b.title.toLowerCase();
         if (first > secound) {
           return -1;
         } else if (first < secound) {
@@ -162,9 +183,9 @@ const getSort = (arr, option) => {
         const first = Date.parse(a.date);
         const secound = Date.parse(b.date);
         if (first > secound) {
-          return -1;
-        } else if (first < secound) {
           return 1;
+        } else if (first < secound) {
+          return -1;
         } else {
           return 0;
         }
@@ -174,9 +195,9 @@ const getSort = (arr, option) => {
         const first = Date.parse(a.date);
         const secound = Date.parse(b.date);
         if (first > secound) {
-          return 1;
-        } else if (first < secound) {
           return -1;
+        } else if (first < secound) {
+          return 1;
         } else {
           return 0;
         }
