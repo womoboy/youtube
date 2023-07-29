@@ -183,9 +183,9 @@ const getSort = (arr, option) => {
         const first = Date.parse(a.date);
         const secound = Date.parse(b.date);
         if (first > secound) {
-          return 1;
-        } else if (first < secound) {
           return -1;
+        } else if (first < secound) {
+          return 1;
         } else {
           return 0;
         }
@@ -195,9 +195,9 @@ const getSort = (arr, option) => {
         const first = Date.parse(a.date);
         const secound = Date.parse(b.date);
         if (first > secound) {
-          return -1;
-        } else if (first < secound) {
           return 1;
+        } else if (first < secound) {
+          return -1;
         } else {
           return 0;
         }
